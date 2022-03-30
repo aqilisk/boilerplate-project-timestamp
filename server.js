@@ -26,14 +26,18 @@ app.get("/api/hello", function (req, res) {
 });
 
 app.get('/api/:unix',(req, res) => {
-  let unix = req.params.unix;
-  if (unix.length === 13) {
-    unix = parseInt(unix);
-  } else {
-    unix = Date.parse(unix)
-  }
-  const date = new Date(unix).toUTCString();
-  res.json({ unix: unix, utc: date })
+  let date = req.params.unix;
+
+  if (date.length === 13) return res.json({
+    unix: parseInt(date),
+    utc: new Date(parseInt(date)).toUTCString()
+  });
+
+  let result = Date.parse(date);
+
+  if (isNaN(result)) return res.json({ error: "Invalid Date" });
+
+  res.json({ unix: result, utc: new Date(result).toUTCString() })
 })
 
 // listen for requests :)
